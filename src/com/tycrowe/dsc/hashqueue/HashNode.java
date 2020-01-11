@@ -36,4 +36,13 @@ public class HashNode<K, V> {
     public V getVal() {
         return val;
     }
+
+    @Override
+    public String toString() {
+        return "HashNode{" +
+                "key=" + key +
+                ", val=" + val +
+                ", next=" + next +
+                '}';
+    }
 }

@@ -26,9 +26,32 @@ class HashQueueTest {
 
     @org.junit.jupiter.api.Test
     void add() {
-        testQueue.add(new HashNode<>(0, "Tyler"));
-        testQueue.add(new HashNode<>(0, "Crowe"));
-        testQueue.add(new HashNode<>(0, "Apple"));
+        HashNode<Integer, String> temp = new HashNode<>(0, "Apple");
+        assertTrue(testQueue.add(new HashNode<>(0, "Tyler")));
+        assertTrue(testQueue.add(new HashNode<>(0, "Crowe")));
+        assertTrue(testQueue.add(temp));
+
+        assertEquals(testQueue.peek(), temp);
+
+        assertEquals(testQueue.size(), 3);
+        assertFalse(testQueue.add(new HashNode<>(0, "Tyler")));
+        assertEquals(testQueue.size(), 3);
+
+        temp = new HashNode<>(3, "Oranges");
+        assertTrue(testQueue.add(new HashNode<>(1, "Pear")));
+        assertTrue(testQueue.add(new HashNode<>(1, "Banana")));
+        assertTrue(testQueue.add(new HashNode<>(2, "Grapes")));
+        assertTrue(testQueue.add(temp));
+
+        assertEquals(testQueue.peek(), temp);
+
+        temp = new HashNode<>(4, "Item 100");
+        for (int i = 0; i < 100; i++) {
+            assertTrue(testQueue.add(new HashNode<>(4, "Item " + i)));
+        }
+        assertTrue(testQueue.add(temp));
+
+        assertEquals(testQueue.peek(), temp);
 
         testQueue.printHash();
     }

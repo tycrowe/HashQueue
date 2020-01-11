@@ -1,18 +1,20 @@
 package com.tycrowe.dsc.hashqueue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class HashQueue<K, V> {
-
     private int size = 0;
+    private int capacity = 0;
     private ArrayList<HashNode<K, V>> queue;
-    private HashNode<K, V>[] queue1;
 
     private HashNode<K, V> top;
 
     public HashQueue() {
         this.size = 0;
-        this.queue = new ArrayList<>(100);
+        this.queue = new ArrayList<>(
+                Collections.nCopies(100, null)
+        );
     }
 
     public int size() {
@@ -42,12 +44,18 @@ public class HashQueue<K, V> {
     public boolean add(HashNode<K, V> kvHashNode) {
         if(kvHashNode == null) return false;
         int point = kvHashNode.hash(size);
-        if(queue.isEmpty() || queue.get(point) == null) {
+        if(queue.isEmpty()) {
             queue.add(point, kvHashNode);
+            capacity++;
+        } else if(queue.get(point) == null) {
+            queue.add(point, kvHashNode);
+            capacity++;
         } else {
-            HashNode<K, V> node = queue.get(point);
-            while(node.hasNext()) node = node.getNext();
-            node.setNext(kvHashNode);
+            if(!contains(kvHashNode)) {
+                HashNode<K, V> node = queue.get(point);
+                while (node.hasNext()) node = node.getNext();
+                node.setNext(kvHashNode);
+            } else return false;
         }
         size++;
         top = kvHashNode;
@@ -86,14 +94,17 @@ public class HashQueue<K, V> {
 
 
     public void printHash() {
-        System.out.println("Key --- \t\t\t\t --- Value");
+        System.out.println("Index\t\t\t\tKey\t\t\t\tValue");
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < size; i++) {
-            HashNode<K, V> node = queue.get(i);
-            sb.append(node.getKey()).append("\t\t\t\t").append(node.getVal());
-            while(node.hasNext()) {
-                node = node.getNext();
-                sb.append(" -> ").append(node.getVal());
+        for (int i = 0; i < capacity; i++) {
+            sb.append("\n").append(i).append("\t\t\t\t\t");
+            if(queue.get(i) != null) {
+                HashNode<K, V> node = queue.get(i);
+                sb.append(node.getKey()).append("\t\t\t\t").append(node.getVal());
+                while(node.hasNext()) {
+                    node = node.getNext();
+                    sb.append(" -> ").append(node.getVal());
+                }
             }
             sb.append("\n");
         }
