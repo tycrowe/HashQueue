@@ -5,10 +5,10 @@ import java.util.ArrayList;
 public class HashQueue<K, V> {
 
     private int size = 0;
-    private ArrayList<HashNode<K, V>[]> queue;
+    private ArrayList<HashNode<K, V>> queue;
+    private HashNode<K, V>[] queue1;
 
     private HashNode<K, V> top;
-    private HashNode<K, V> back;
 
     public HashQueue() {
         this.size = 0;
@@ -23,30 +23,49 @@ public class HashQueue<K, V> {
         return size == 0;
     }
 
-    public boolean contains(K key) {
-        if(key == null) return false;
+    public boolean contains(HashNode<K, V> kvHashNode) {
+        if (kvHashNode == null || queue.isEmpty()) return false;
         else {
-            int point = key.hashCode() % size;
-            if(queue.get(point) != null) {
-                HashNode<K, V>[] nodes = queue.get(point);
-                for (HashNode<K, V> node: nodes) {
-
+            int point = kvHashNode.hash(size);
+            if (queue.get(point) != null) {
+                HashNode<K, V> node = queue.get(point);
+                while (node.hasNext()) {
+                    if (node.getVal().equals(kvHashNode.getVal()))
+                        return true;
+                    node = node.getNext();
                 }
             }
         }
+        return false;
     }
 
-    public boolean add(K key, V val) {
-        if(key == null) return false;
-        else {
-            HashNode<K, V> temp = new HashNode<>(
-                key, val
-            );
-            queue.add(temp.hash(size), temp);
+    public boolean add(HashNode<K, V> kvHashNode) {
+        if(kvHashNode == null) return false;
+        int point = kvHashNode.hash(size);
+        if(queue.isEmpty() || queue.get(point) == null) {
+            queue.add(point, kvHashNode);
+        } else {
+            HashNode<K, V> node = queue.get(point);
+            while(node.hasNext()) node = node.getNext();
+            node.setNext(kvHashNode);
         }
+        size++;
+        top = kvHashNode;
+        return true;
     }
 
-    public boolean remove(K key) {
+    public boolean remove(HashNode<K, V> kvHashNode) {
+        if(contains(kvHashNode)) {
+            HashNode<K, V> node = queue.get(kvHashNode.hash(size));
+            while (node.hasNext()) {
+                if (node.getNext().getVal().equals(kvHashNode.getVal())) {
+                    node.setNext(node.getNext().getNext());
+                    size--;
+                    return true;
+                }
+                node = node.getNext();
+            }
+        }
         return false;
     }
 
@@ -54,19 +73,30 @@ public class HashQueue<K, V> {
         this.queue.clear();
     }
 
-    public V remove() {
-        return null;
+    public HashNode<K, V> poll() {
+        HashNode<K, V> temp = top;
+        top = top.getNext();
+        size--;
+        return temp;
     }
 
-    public V poll() {
-        return null;
+    public HashNode<K, V> peek() {
+        return top;
     }
 
-    public V element() {
-        return null;
-    }
 
-    public V peek() {
-        return null;
+    public void printHash() {
+        System.out.println("Key --- \t\t\t\t --- Value");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            HashNode<K, V> node = queue.get(i);
+            sb.append(node.getKey()).append("\t\t\t\t").append(node.getVal());
+            while(node.hasNext()) {
+                node = node.getNext();
+                sb.append(" -> ").append(node.getVal());
+            }
+            sb.append("\n");
+        }
+        System.out.println(sb.toString());
     }
 }
