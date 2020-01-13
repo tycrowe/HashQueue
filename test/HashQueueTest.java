@@ -53,7 +53,7 @@ class HashQueueTest {
 
         assertEquals(testQueue.peek(), temp);
 
-        testQueue.printHash();
+        System.out.println(testQueue.toString());
     }
 
     @org.junit.jupiter.api.Test
@@ -66,15 +66,21 @@ class HashQueueTest {
 
     @org.junit.jupiter.api.Test
     void poll() {
-        HashNode<Integer, String> temp0 = new HashNode<>(0, "HashQueueTest");
-        HashNode<Integer, String> temp1 = new HashNode<>(0, "Tyler");
-        HashNode<Integer, String> temp2 = new HashNode<>(0, "Crowe");
+        HashNode<Integer, String> temp0 = new HashNode<>(0, "Item 0");
+        HashNode<Integer, String> temp1 = new HashNode<>(1, "Item 1");
+        HashNode<Integer, String> temp2 = new HashNode<>(2, "Item 2");
+        HashNode<Integer, String> temp3 = new HashNode<>(5, "Item 3");
 
+        assertTrue(testQueue.add(temp0));
         assertTrue(testQueue.add(temp1));
         assertTrue(testQueue.add(temp2));
-        assertTrue(testQueue.add(temp0));
+        assertTrue(testQueue.add(temp3));
 
-        testQueue.printHash();
+        System.out.println(testQueue.toString());
+
+        testQueue.poll();
+
+        System.out.println(testQueue.toString());
     }
 
     @org.junit.jupiter.api.Test

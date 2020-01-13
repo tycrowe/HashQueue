@@ -5,10 +5,10 @@ import java.util.Collections;
 
 public class HashQueue<K, V> {
     private int size = 0;
-    private int capacity = 0;
     private ArrayList<HashNode<K, V>> queue;
 
     private HashNode<K, V> top;
+    private HashNode<K, V> prev;
 
     public HashQueue() {
         this.size = 0;
@@ -46,10 +46,8 @@ public class HashQueue<K, V> {
         int point = kvHashNode.hash(size);
         if(queue.isEmpty()) {
             queue.add(point, kvHashNode);
-            capacity++;
         } else if(queue.get(point) == null) {
             queue.add(point, kvHashNode);
-            capacity++;
         } else {
             if(!contains(kvHashNode)) {
                 HashNode<K, V> node = queue.get(point);
@@ -58,6 +56,7 @@ public class HashQueue<K, V> {
             } else return false;
         }
         size++;
+        prev = top;
         top = kvHashNode;
         return true;
     }
@@ -83,7 +82,7 @@ public class HashQueue<K, V> {
 
     public HashNode<K, V> poll() {
         HashNode<K, V> temp = top;
-        top = top.getNext();
+        top = prev;
         size--;
         return temp;
     }
@@ -92,11 +91,11 @@ public class HashQueue<K, V> {
         return top;
     }
 
-
-    public void printHash() {
+    @Override
+    public String toString() {
         System.out.println("Index\t\t\t\tKey\t\t\t\tValue");
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < capacity; i++) {
+        for (int i = 0; i < 100; i++) {
             sb.append("\n").append(i).append("\t\t\t\t\t");
             if(queue.get(i) != null) {
                 HashNode<K, V> node = queue.get(i);
@@ -108,6 +107,6 @@ public class HashQueue<K, V> {
             }
             sb.append("\n");
         }
-        System.out.println(sb.toString());
+        return sb.toString();
     }
 }

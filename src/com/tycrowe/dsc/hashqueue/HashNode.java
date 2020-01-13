@@ -25,7 +25,7 @@ public class HashNode<K, V> {
     }
 
     public int hash(int size) {
-        if(key.hashCode() == 0) return 0;
+        if(size == 0) return 0;
         return this.key.hashCode() % size;
     }
 
