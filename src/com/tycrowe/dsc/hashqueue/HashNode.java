@@ -5,37 +5,58 @@ public class HashNode<K, V> {
     private K key;
     private V val;
 
-    private HashNode<K, V> neighborNode;
-    private HashNode<K, V> previousNode;
+    private HashNode<K, V> next;
+    private HashNode<K, V> prev;
+
+    private HashNode<K, V> prevNodeAddedFromQueue;
 
     public HashNode(K key, V value) {
         this.key = key;
         this.val = value;
     }
 
-    public boolean hasNeighbor() {
-        return neighborNode != null;
+    public HashNode(HashNode<K, V> node) {
+        this.key = node.key;
+        this.val = node.val;
     }
 
-    public HashNode<K, V> getNeighborNode() {
-        return neighborNode;
+    public boolean hasNext() {
+        return next != null;
     }
 
-    public void setNeighborNode(HashNode<K, V> neighborNode) {
-        this.neighborNode = neighborNode;
+    public HashNode<K, V> getNext() {
+        return next;
     }
 
-    public HashNode<K, V> getPreviousNode() {
-        return previousNode;
+    public void setNext(HashNode<K, V> next) {
+        this.next = next;
     }
 
-    public void setPreviousNode(HashNode<K, V> previousNode) {
-        this.previousNode = previousNode;
+    public boolean hasPrev() {
+        return next != null;
+    }
+
+    public HashNode<K, V> getPrev() {
+        return prev;
+    }
+
+    public void setPrev(HashNode<K, V> prev) {
+        this.prev = prev;
+    }
+
+    public HashNode<K, V> getPrevNodeAddedFromQueue() {
+        return prevNodeAddedFromQueue;
+    }
+
+    public void setPrevNodeAddedFromQueue(HashNode<K, V> prevNodeAddedFromQueue) {
+        this.prevNodeAddedFromQueue = prevNodeAddedFromQueue;
     }
 
     public int hash(int size) {
         if(size == 0) return 0;
-        return this.key.hashCode() % size;
+        int point = this.key.hashCode() % size;
+        if(point < 0) point = Math.abs(point);
+        return point;
     }
 
     public K getKey() {
@@ -46,12 +67,16 @@ public class HashNode<K, V> {
         return val;
     }
 
+    public void setVal(V val) {
+        this.val = val;
+    }
+
     @Override
     public String toString() {
         return "HashNode{" +
                 "key=" + key +
                 ", val=" + val +
-                ", next=" + neighborNode +
+                ", next=" + next +
                 '}';
     }
 }

@@ -1,6 +1,10 @@
 import com.tycrowe.dsc.hashqueue.HashNode;
 import com.tycrowe.dsc.hashqueue.HashQueue;
 
+import java.util.ArrayList;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class HashQueueTest {
@@ -14,15 +18,35 @@ class HashQueueTest {
 
     @org.junit.jupiter.api.Test
     void size() {
-        System.out.println(testQueue.size());
-    }
-
-    @org.junit.jupiter.api.Test
-    void isEmpty() {
+        // Integer Test!
+        int rGen = 0;
+        for (int i = 0; i < 1000; i++) {
+            rGen = ThreadLocalRandom.current().nextInt(0, 10000);
+            assertTrue(testQueue.add(new HashNode<>(rGen, "Item " + i)));
+        }
+        assertEquals(1000, testQueue.getNodeCount());
+        System.out.println(testQueue.toString());
+        HashQueue<String, String> testQueue2 = new HashQueue<>();
+        // String test
+        String strGen = "test";
+        for (int i = 0; i < 1000; i++) {
+            strGen = UUID.randomUUID().toString();
+            assertTrue(testQueue2.add(new HashNode<>(strGen, "Item " + i)));
+        }
+        assertEquals(1000, testQueue2.getNodeCount());
+        System.out.println(testQueue2.toString());
     }
 
     @org.junit.jupiter.api.Test
     void contains() {
+        int rGen = 0;
+        HashNode<Integer, String> node;
+        for (int i = 0; i < 1000; i++) {
+            rGen = i;
+            node = new HashNode<>(rGen, "Item " + i);
+            assertTrue(testQueue.add(node));
+            assertTrue(testQueue.contains(node));
+        }
     }
 
     @org.junit.jupiter.api.Test
@@ -33,8 +57,8 @@ class HashQueueTest {
         assertTrue(testQueue.add(temp));
 
         assertEquals(testQueue.peek(), temp);
-        assertEquals(testQueue.peek().getPreviousNode().getVal(), "Crowe");
-        assertEquals(testQueue.peek().getPreviousNode().getPreviousNode().getVal(), "Tyler");
+        assertEquals(testQueue.peek().getPrevNodeAddedFromQueue().getVal(), "Crowe");
+        assertEquals(testQueue.peek().getPrevNodeAddedFromQueue().getPrevNodeAddedFromQueue().getVal(), "Tyler");
 
         assertEquals(testQueue.getNodeCount(), 3);
         assertFalse(testQueue.add(new HashNode<>(0, "Tyler")));
@@ -61,6 +85,27 @@ class HashQueueTest {
 
     @org.junit.jupiter.api.Test
     void remove() {
+        ArrayList<HashNode<Integer, String>> nodes = new ArrayList<>();
+        int rGen = 0;
+        HashNode<Integer, String> temp;
+        for (int i = 0; i < 1000; i++) {
+            rGen = ThreadLocalRandom.current().nextInt(0, 25000);
+            temp = new HashNode<>(rGen, "Item " + i);
+            if(i % 3 == 0) {
+                nodes.add(temp);
+            }
+            assertTrue(testQueue.add(temp));
+        }
+        assertEquals(testQueue.size(), 100);
+        assertEquals(testQueue.getNodeCount(), 1000);
+
+        assertTrue(nodes.size() > 0);
+        for (HashNode<Integer, String> node : nodes) {
+            testQueue.remove(node);
+        }
+
+        assertEquals(testQueue.size(), 100);
+        assertEquals(1000 - nodes.size(), testQueue.getNodeCount());
     }
 
     @org.junit.jupiter.api.Test

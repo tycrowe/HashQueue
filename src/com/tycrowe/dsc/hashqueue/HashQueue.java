@@ -5,16 +5,11 @@ import java.util.Collections;
 
 public class HashQueue<K, V> {
     private ArrayList<HashNode<K, V>> queue;
-
     private HashNode<K, V> top;
-    private HashNode<K, V> prev;
-
     private int nodeCount = 0;
 
     public HashQueue() {
-        this.queue = new ArrayList<>(
-                Collections.nCopies(100, null)
-        );
+        this.queue = new ArrayList<>(Collections.nCopies(100, null));
     }
 
     public int size() {
@@ -35,10 +30,12 @@ public class HashQueue<K, V> {
             int point = kvHashNode.hash(queue.size());
             if (queue.get(point) != null) {
                 HashNode<K, V> node = queue.get(point);
-                while (node.hasNeighbor()) {
+                while (true) {
                     if (node.getVal().equals(kvHashNode.getVal()))
                         return true;
-                    node = node.getNeighborNode();
+                    if(!node.hasNext())
+                        return false;
+                    node = node.getNext();
                 }
             }
         }
@@ -70,17 +67,20 @@ public class HashQueue<K, V> {
              */
             // Resolve the point of which the node will be added.
             int point = kvHashNode.hash(queue.size());
-            if(queue.get(point) == null) {
-                queue.add(point, kvHashNode);
+            HashNode<K, V> node = queue.get(point);
+            if(node == null) {
+                queue.set(point, new HashNode<>(kvHashNode));
             } else {
                 if (!contains(kvHashNode)) {
-                    HashNode<K, V> node = queue.get(point);
-                    while (node.hasNeighbor()) node = node.getNeighborNode();
-                    node.setNeighborNode(kvHashNode);
+                    while (node.hasNext()) {
+                        node = node.getNext();
+                    }
+                    kvHashNode.setPrev(node);
+                    node.setNext(kvHashNode);
                 } else return false;
             }
             if(top != null) {
-                kvHashNode.setPreviousNode(top);
+                kvHashNode.setPrevNodeAddedFromQueue(top);
             }
             top = kvHashNode;
             nodeCount++;
@@ -89,20 +89,44 @@ public class HashQueue<K, V> {
     }
 
     public boolean remove(HashNode<K, V> kvHashNode) {
-        return false;
+        if(kvHashNode == null) return false;
+        else {
+            if(contains(kvHashNode)) {
+                int point = kvHashNode.hash(size());
+                HashNode<K, V> node = queue.get(point);
+                while (node.hasNext()) {
+                    if(node.getVal().equals(kvHashNode.getVal())) {
+                        // Found. Adjust.
+                        /* Preconditions:
+                            - If the node in the chain is the last one, only adjust the previous pointer.
+                            - If the node is the only one in it's key row, then simply drop it from the table.
+                         */
+                        if(!node.hasPrev())
+                            queue.set(point, null);
+                        else if(node.hasNext()) {
+                            System.out.println(node);
+                            node.getPrev().setNext(node.getNext());
+                            node.getNext().setPrev(node.getPrev());
+                        }
+                        return true;
+                    }
+                    node = node.getNext();
+                }
+            }
+            return false;
+        }
     }
 
     public void clear() {
         this.queue.clear();
     }
 
-    // TODO
     public HashNode<K, V> poll() {
         if(top == null) {
             return null;
         } else {
             HashNode<K, V> temp = top;
-            top = top.getPreviousNode();
+            top = top.getPrevNodeAddedFromQueue();
             nodeCount--;
             return temp;
         }
@@ -121,10 +145,12 @@ public class HashQueue<K, V> {
             if(queue.get(i) != null) {
                 HashNode<K, V> node = queue.get(i);
                 sb.append(node.getKey()).append("\t\t\t\t").append(node.getVal());
-                while(node.hasNeighbor()) {
-                    node = node.getNeighborNode();
+                while(node.hasNext()) {
+                    node = node.getNext();
                     sb.append(" -> ").append(node.getVal());
                 }
+            } else {
+                sb.append("null\n");
             }
             sb.append("\n");
         }
