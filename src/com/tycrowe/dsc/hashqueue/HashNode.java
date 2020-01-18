@@ -5,23 +5,32 @@ public class HashNode<K, V> {
     private K key;
     private V val;
 
-    private HashNode<K, V> next;
+    private HashNode<K, V> neighborNode;
+    private HashNode<K, V> previousNode;
 
     public HashNode(K key, V value) {
         this.key = key;
         this.val = value;
     }
 
-    public boolean hasNext() {
-        return next != null;
+    public boolean hasNeighbor() {
+        return neighborNode != null;
     }
 
-    public HashNode<K, V> getNext() {
-        return next;
+    public HashNode<K, V> getNeighborNode() {
+        return neighborNode;
     }
 
-    public void setNext(HashNode<K, V> next) {
-        this.next = next;
+    public void setNeighborNode(HashNode<K, V> neighborNode) {
+        this.neighborNode = neighborNode;
+    }
+
+    public HashNode<K, V> getPreviousNode() {
+        return previousNode;
+    }
+
+    public void setPreviousNode(HashNode<K, V> previousNode) {
+        this.previousNode = previousNode;
     }
 
     public int hash(int size) {
@@ -42,7 +51,7 @@ public class HashNode<K, V> {
         return "HashNode{" +
                 "key=" + key +
                 ", val=" + val +
-                ", next=" + next +
+                ", next=" + neighborNode +
                 '}';
     }
 }
