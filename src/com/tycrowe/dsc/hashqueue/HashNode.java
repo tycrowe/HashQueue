@@ -33,7 +33,7 @@ public class HashNode<K, V> {
     }
 
     public boolean hasPrev() {
-        return next != null;
+        return prev != null;
     }
 
     public HashNode<K, V> getPrev() {

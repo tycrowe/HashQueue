@@ -1,5 +1,6 @@
 import com.tycrowe.dsc.hashqueue.HashNode;
 import com.tycrowe.dsc.hashqueue.HashQueue;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -105,14 +106,25 @@ class HashQueueTest {
         }
 
         assertEquals(testQueue.size(), 100);
-        assertEquals(1000 - nodes.size(), testQueue.getNodeCount());
     }
 
     @org.junit.jupiter.api.Test
     void clear() {
+        assertEquals(0, testQueue.getNodeCount());
+        int rGen = 0;
+        for (int i = 0; i < 1000; i++) {
+            rGen = ThreadLocalRandom.current().nextInt(0, 10000);
+            assertTrue(testQueue.add(new HashNode<>(rGen, "Item " + i)));
+        }
+        assertNotEquals(0, testQueue.getNodeCount());
+        assertEquals(testQueue.getNodeCount(), 1000);
+        testQueue.clear();
+        assertTrue(testQueue.getNodeCount() == 0);
+        assertEquals(testQueue.getNodeCount(), 0);
+        assertEquals(testQueue.size(), 100);
     }
 
-    @org.junit.jupiter.api.Test
+    @RepeatedTest(3)
     void poll() {
         HashNode<Integer, String> temp0 = new HashNode<>(0, "Item 0");
         HashNode<Integer, String> temp1 = new HashNode<>(1, "Item 1");
@@ -133,5 +145,11 @@ class HashQueueTest {
 
     @org.junit.jupiter.api.Test
     void peek() {
+        HashNode<Integer, String> temp = new HashNode<>(0, "Apple");
+        assertTrue(testQueue.add(new HashNode<>(0, "Tyler")));
+        assertTrue(testQueue.add(new HashNode<>(0, "Crowe")));
+        assertTrue(testQueue.add(temp));
+
+        assertEquals(temp, testQueue.peek());
     }
 }

@@ -104,7 +104,6 @@ public class HashQueue<K, V> {
                         if(!node.hasPrev())
                             queue.set(point, null);
                         else if(node.hasNext()) {
-                            System.out.println(node);
                             node.getPrev().setNext(node.getNext());
                             node.getNext().setPrev(node.getPrev());
                         }
@@ -118,7 +117,8 @@ public class HashQueue<K, V> {
     }
 
     public void clear() {
-        this.queue.clear();
+        this.queue = new ArrayList<>(Collections.nCopies(100, null));
+        this.nodeCount = 0;
     }
 
     public HashNode<K, V> poll() {
