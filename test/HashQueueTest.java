@@ -85,6 +85,17 @@ class HashQueueTest {
     }
 
     @org.junit.jupiter.api.Test
+    void large_add_test() {
+        int rGen = 0;
+        for (int i = 0; i < 100000; i++) {
+            rGen = ThreadLocalRandom.current().nextInt(0, 25000);
+            assertTrue(testQueue.add(new HashNode<>(rGen, "Item " + i)));
+        }
+
+        System.out.println(testQueue.toString());
+    }
+
+    @org.junit.jupiter.api.Test
     void remove() {
         ArrayList<HashNode<Integer, String>> nodes = new ArrayList<>();
         int rGen = 0;
